@@ -253,19 +253,23 @@ function unformat(inputRaw, formatRaw) {
 			});
 		}
 
-		if (/^(?:#(?:,##)?)?0*\.?0*(?:E\+)?0*%?$/.test(format)) {
-			var formattedNumber = /\d*\.?\d*(?:E\+)?\d*%?/.exec(input.replace(',', ''))[0];
+		if (/^(?:#(?:,##)?)?-?0*\.?0*(?:E\+)?0*%?$/.test(format)) {
+			var formattedNumber = /-?\d*\.?\d*(?:E[\+\-])?\d*%?/.exec(input.replace(',', ''))[0];
 			if (/%$/.test(formattedNumber)) {
 				return parseFloat(formattedNumber.replace('%', ''), 10) / 100;
 			} else {
 				return parseFloat(formattedNumber, 10);
 			}
 		} else if (/^(?:#\s)?\?+\/\?+$/.test(format)) {
-			var wholePart = (/^#\s/.test(format) && /\d+\s\d*\/?\d*/.test(input))? parseInt(input.match(/^\d+/), 10) : 0;
-			var fractionPart = /(\d+)(?:\/(\d+))?$/.exec(input);
+			var wholePart = (/^#\s/.test(format) && /\d+\s\d*\/?\d*/.test(input))? parseInt(input.match(/^-?\d+/), 10) : 0;
+			var fractionPart = /(-?\d+)(?:\/(\d+))?$/.exec(input);
 			var numerator = fractionPart? parseInt(fractionPart[1]) : 0;
 			var denominator = fractionPart[2]? parseInt(fractionPart[2]) : 1;
-			return wholePart + numerator / denominator;
+			if (wholePart < 0) {
+				return wholePart - numerator / denominator;
+			} else {
+				return wholePart + numerator / denominator;
+			}
 		} else {
 			return unformatDateAndTime(input, format);
 		}

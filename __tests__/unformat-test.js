@@ -13,22 +13,27 @@ describe('unformat', function () {
 		expect(unformat('12345', '0')).toBe(12345);
 		expect(unformat('123.45', '0.00')).toBe(123.45);
 		expect(unformat('.12345', '.00000')).toBe(0.12345);
+		expect(unformat('-12.345', '0.000')).toBe(-12.345);
 	});
 
 	it('handles number formats with commas', function () {
 		expect(unformat('12,345', '#,##0')).toBe(12345);
 		expect(unformat('1,234.567', '#,##0.000')).toBe(1234.567);
+		expect(unformat('-1,234.567', '#,##0.000')).toBe(-1234.567);
 	});
 
 	it('handles number formats with percentages', function () {
 		expect(unformat('12%', '0%')).toBe(0.12);
 		expect(unformat('12.34%', '0.00%')).toBe(0.1234);
 		expect(unformat('1,234.5%', '#,##0.0%')).toBe(12.345);
+		expect(unformat('-12.34%', '0.00%')).toBe(-0.1234);
 	});
 
 	it('handles number formats with E+x notation', function () {
 		expect(unformat('1.23E+2', '0.00E+0')).toBe(123);
 		expect(unformat('1.23E+4%', '0.00E+0%')).toBe(123);
+		expect(unformat('1.23E-01', '0.00E+0')).toBe(0.123);
+		expect(unformat('-1.23E-01', '0.00E+0')).toBe(-0.123);
 	});
 
 	it('handles number formats with fractions', function () {
@@ -38,6 +43,7 @@ describe('unformat', function () {
 		expect(unformat('2469/2', '?/?')).toBe(1234.5);
 		expect(unformat('3/4', '# ?/?')).toBe(0.75);
 		expect(unformat('1234  1/20', '# ??/??')).toBe(1234.05);
+		expect(unformat('-3 1/2', '# ?/?')).toBe(-3.5);
 	});
 
 	it('handles date formats', function () {
