@@ -46,6 +46,12 @@ describe('unformat', function () {
 		expect(unformat('-3 1/2', '# ?/?')).toBe(-3.5);
 	});
 
+	it('handles number formats with other symbols', function () {
+		expect(unformat('$1,234', '$#,##0')).toBe(1234);
+		expect(unformat('(555) 867-5309', '(000) 000-0000')).toBe(5558675309);
+		expect(unformat('-123-456', '000-000')).toBe(-123456);
+	})
+
 	it('handles date formats', function () {
 		expect(unformat('11-21-2036', 'mm-dd-yyyy')).toBe(50000);
 		expect(unformat('11/21/36', 'm/d/yy')).toBe(50000);

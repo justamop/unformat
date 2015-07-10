@@ -243,13 +243,36 @@ function unformat(inputRaw, formatRaw) {
 	if (formatRaw.toLowerCase() === 'general') {
 		return parseFloat(inputRaw, 10);
 	} else {
-		var format = formatRaw;
-		var input = inputRaw;
+		var dtFormat = formatRaw;
+		var dtInput = inputRaw;
 
 		if (formatRaw.match(/"[^"]*"/g)) {
 			formatRaw.match(/"[^"]*"/g).forEach(function (literal) {
-				format = format.replace(literal, '');
-				input = input.replace(literal.replace(/"/g, ''), '');
+				dtFormat = dtFormat.replace(literal, '');
+				dtInput = dtInput.replace(literal.replace(/"/g, ''), '');
+			});
+		}
+
+		var format = dtFormat;
+		var input = dtInput;
+
+		if (format.match(/[^0-9#%+\[\]\?\/\.@dmyhseDMYHSE]/g)) {
+			format.match(/.?[^0-9#%+\[\]\?\/\.@dmyhseDMYHSE]/g).forEach(function (symbol) {
+				if (symbol.length === 2) {
+					if (!((symbol[1] === ' ' || symbol[1] === ',') && symbol[0] === '#')) {
+						format = format.replace(symbol[1], '');
+						if (symbol[1] === '-' && input[0] === '-') {
+							input = input.replace(symbol[1], '');
+							input = input.replace(symbol[1], '');
+							input = '-' + input;
+						} else {
+							input = input.replace(symbol[1], '');
+						}						
+					}
+				} else if (symbol !== '-') {
+					format = format.replace(symbol, '');
+					input = input.replace(symbol, '');
+				}
 			});
 		}
 
@@ -271,7 +294,7 @@ function unformat(inputRaw, formatRaw) {
 				return wholePart + numerator / denominator;
 			}
 		} else {
-			return unformatDateAndTime(input, format);
+			return unformatDateAndTime(dtInput, dtFormat);
 		}
 	}
 }
